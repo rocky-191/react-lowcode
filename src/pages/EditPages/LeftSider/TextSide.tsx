@@ -1,8 +1,7 @@
 import {defaultComponentStyle} from "src/utils/const";
 import leftSideStyles from "./leftSide.module.less";
-import useEditStore from "src/store/editStore";
+import {addCmp} from "src/store/editStore";
 import {isTextComponent} from ".";
-import {memo} from "react";
 
 const defaultStyle = {
   ...defaultComponentStyle,
@@ -34,14 +33,7 @@ const settings = [
   },
 ];
 
-const TextSide = memo(() => {
-  const {addCmp} = useEditStore(
-    (state) => state,
-    () => {
-      return true;
-    }
-  );
-
+const TextSide = () => {
   console.log("TextSide render"); //sy-log
   return (
     <div className={leftSideStyles.main}>
@@ -67,6 +59,6 @@ const TextSide = memo(() => {
       </ul>
     </div>
   );
-});
+}
 
 export default TextSide;

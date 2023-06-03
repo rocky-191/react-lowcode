@@ -5,14 +5,15 @@ import {getOnlyKey} from "src/utils";
 
 const useEditStore = create(
   immer<EditStoreState & EditStoreAction>((set) => ({
-    canvas: getDefaultCanvas(),
-    addCmp: (_cmp: ICmp) => {
-      set((draft) => {
-        draft.canvas.cmps.push({..._cmp, key: getOnlyKey()});
-      });
-    },
+    canvas: getDefaultCanvas()
   }))
 );
+
+export const addCmp = (_cmp: ICmp) => {
+  useEditStore.setState((draft) => {
+    draft.canvas.cmps.push({..._cmp, key: getOnlyKey()});
+  });
+};
 
 export default useEditStore;
 

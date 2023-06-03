@@ -1,50 +1,45 @@
+import {Card, Divider, Table, Space, Button, Modal, message} from "antd";
 import {useEffect, useState} from "react";
-import {Card, Space, Table, Button, Divider, Modal} from "antd";
 import {Link} from "react-router-dom";
-import {deleteCanvas, getCanvasList} from "src/request/list";
+import Axios from "src/request/axios";
+import {deleteCanvasByIdEnd, getCanvasListEnd} from "src/request/end";
+import useUserStore from "src/store/userStore";
 
-type ListItem = {
+interface ListItem {
   id: number;
-  type: string;
+  type: string; // 页面、模板页面
   title: string;
   content: string;
-};
-
-const {confirm} = Modal;
-
-export default function List() {
+}
+export default function ListPage() {
   const [list, setList] = useState([]);
+  const isLogin = useUserStore((state) => state.isLogin);
 
-  const fresh = () => {
-    getCanvasList("", (res: any) => {
-      let data = res.content || [];
-      // 不让用户编辑这三个模板页
-      data = data.filter(
-        (item: ListItem) => item.id !== 2 && item.id !== 30 && item.id !== 31
-      );
-      setList(data);
+  const fresh = async () => {
+    console.log('mgl','isLogin',isLogin);
+    if (!isLogin) {
+      return;
+    }
+    const res: any = await Axios.get(getCanvasListEnd);
+    const data = res?.content || [];
+    setList(data);
+  };
+
+  const delConfirm = async (id: number) => {
+    Modal.confirm({
+      title: "删除",
+      content: "您确定要删除吗？",
+      onOk: async () => {
+        await Axios.post(deleteCanvasByIdEnd, {id});
+        message.success("删除成功");
+        fresh();
+      },
     });
   };
 
   useEffect(() => {
     fresh();
-  }, []);
-
-  const del = (values: {id: number}) => {
-    confirm({
-      title: "删除",
-      content: "您确认要删除吗，一旦删除之后将无法恢复",
-      okText: "确认",
-      okType: "danger",
-      cancelText: "取消",
-      onOk() {
-        deleteCanvas(values, () => {
-          alert("删除成功");
-          fresh();
-        });
-      },
-    });
-  };
+  }, [isLogin]);
 
   const editUrl = (item: ListItem) => `/?id=${item.id}&type=${item.type}`;
   const columns = [
@@ -87,7 +82,7 @@ export default function List() {
             </a>
 
             <Link to={editUrl(item)}>编辑</Link>
-            <Button onClick={() => del({id})}>删除</Button>
+            <Button onClick={() => delConfirm(id)}>删除</Button>
           </Space>
         );
       },
@@ -96,7 +91,7 @@ export default function List() {
 
   return (
     <Card>
-      <Link to={"/"}>新增</Link>
+      <Link to="/">新增</Link>
       <Divider />
 
       <Table

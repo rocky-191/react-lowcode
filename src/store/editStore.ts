@@ -44,6 +44,12 @@ export const fetchCanvas = async (id: number) => {
   }
 };
 
+export const clearCanvas = () => {
+  useEditStore.setState((draft) => {
+    draft.canvas = getDefaultCanvas();
+  });
+};
+
 
 export default useEditStore;
 

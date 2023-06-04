@@ -1,19 +1,35 @@
 import {create} from "zustand";
 import {immer} from "zustand/middleware/immer";
-import {EditStoreState, EditStoreAction, ICanvas, ICmp} from "./editStoreTypes";
+import {
+  EditStoreState,
+  EditStoreAction,
+  ICanvas,
+  ICmp,
+  Style,
+} from "./editStoreTypes";
 import {getOnlyKey} from "src/utils";
-import Axios from '../request/axios'
-import { getCanvasByIdEnd,saveCanvasEnd } from '../request/end';
+import Axios from "src/request/axios";
+import {getCanvasByIdEnd, saveCanvasEnd} from "src/request/end";
 
 const useEditStore = create(
-  immer<EditStoreState & EditStoreAction>((set) => ({
-    canvas: getDefaultCanvas()
+  immer<EditStoreState & EditStoreAction>(() => ({
+    canvas: getDefaultCanvas(),
+    // 记录选中组件的下标
+    assembly: new Set(),
   }))
 );
+
+export const clearCanvas = () => {
+  useEditStore.setState((draft) => {
+    draft.canvas = getDefaultCanvas();
+    draft.assembly.clear();
+  });
+};
 
 export const addCmp = (_cmp: ICmp) => {
   useEditStore.setState((draft) => {
     draft.canvas.cmps.push({..._cmp, key: getOnlyKey()});
+    draft.assembly = new Set([draft.canvas.cmps.length - 1]);
   });
 };
 
@@ -44,12 +60,47 @@ export const fetchCanvas = async (id: number) => {
   }
 };
 
-export const clearCanvas = () => {
+// ! 选中组件
+// 全部选中
+export const setAllCmpsSelected = () => {
   useEditStore.setState((draft) => {
-    draft.canvas = getDefaultCanvas();
+    const len = draft.canvas.cmps.length;
+    draft.assembly = new Set(Array.from({length: len}, (a, b) => b));
   });
 };
 
+// 选中多个
+// 如果再次点击已经选中的组件，则取消选中
+export const setCmpsSelected = (indexes: Array<number>) => {
+  useEditStore.setState((draft) => {
+    if (indexes)
+      indexes.forEach((index) => {
+        if (draft.assembly.has(index)) {
+          // 取消这个组件的选中
+          draft.assembly.delete(index);
+        } else {
+          // 选中
+          draft.assembly.add(index);
+        }
+      });
+  });
+};
+
+// 选中单个
+// 如果index为-1，则取消选中
+export const setCmpSelected = (index: number) => {
+  if (index === -1) {
+    useEditStore.setState((draft) => {
+      if (draft.assembly.size > 0) {
+        draft.assembly.clear();
+      }
+    });
+  } else if (index > -1) {
+    useEditStore.setState((draft) => {
+      draft.assembly = new Set([index]);
+    });
+  }
+};
 
 export default useEditStore;
 

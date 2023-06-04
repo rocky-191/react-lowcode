@@ -1,37 +1,45 @@
-import useEditStore,{addCmp, clearCanvas, fetchCanvas} from "src/store/editStore";
+import useEditStore, {
+  addCmp,
+  clearCanvas,
+  fetchCanvas,
+} from "src/store/editStore";
 import styles from "./index.module.less";
 import Cmp from "../Cmp";
-import { useEffect } from "react";
-import { useCanvasId } from "src/store/hooks";
+import {useEffect} from "react";
+import {useCanvasId} from "src/store/hooks";
+import EditBox from "../EditBox";
 
 export default function Canvas() {
-  const canvas = useEditStore((state) => state.canvas);
-  const { cmps, style } = canvas;
+  const [canvas, assembly] = useEditStore((state) => [
+    state.canvas,
+    state.assembly,
+  ]);
+  const {cmps, style} = canvas;
 
-  const id=useCanvasId();
-  useEffect(()=>{
-    if(id){
-      fetchCanvas(id)
-    }else{
-      clearCanvas()
+  const id = useCanvasId();
+  useEffect(() => {
+    if (id) {
+      fetchCanvas(id);
+    } else {
+      clearCanvas();
     }
-  },[])
+  }, []);
 
-  const onDrop = e => {
-    // 1、获取被拖拽组件信息
+  const onDrop = (e) => {
+    // 1. 读取被拖拽的组件信息
     let dragCmp = e.dataTransfer.getData("drag-cmp");
     if (!dragCmp) {
       return;
     }
     dragCmp = JSON.parse(dragCmp);
 
-    // 读取用户松手的位置，相对网页
+    // 2. 读取用户松手的位置，相对网页
     const endX = e.pageX;
     const endY = e.pageY;
 
     const canvasDomPos = {
       top: 114,
-      left: (document.body.clientWidth - style.width) / 2
+      left: (document.body.clientWidth - style.width) / 2,
     };
 
     const disX = endX - canvasDomPos.left;
@@ -44,21 +52,24 @@ export default function Canvas() {
     addCmp(dragCmp);
   };
 
-  const allowDraop = e => {
+  const allowDrop = (e) => {
     e.preventDefault();
   };
-
-  console.log("canvas render",cmps); //sy-log
+  console.log("canvas render", cmps); //sy-log
   return (
     <div
       id="canvas"
       className={styles.main}
       style={canvas.style}
       onDrop={onDrop}
-      onDragOver={allowDraop}
-    >
+      onDragOver={allowDrop}>
+      <EditBox />
       {cmps.map((item, index) => (
-        <Cmp key={item.key} cmp={item} index={index}></Cmp>
+        <Cmp
+          key={item.key}
+          cmp={item}
+          index={index}
+          isSelected={assembly.has(index)}></Cmp>
       ))}
     </div>
   );

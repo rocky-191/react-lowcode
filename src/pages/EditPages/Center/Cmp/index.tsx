@@ -18,6 +18,7 @@ const Cmp = memo((props: ICmpProps) => {
   const {style} = cmp;
 
   const setSelected = (e) => {
+    e.stopPropagation();
     if (e.metaKey) {
       setCmpsSelected([index]);
     } else {
@@ -34,14 +35,16 @@ const Cmp = memo((props: ICmpProps) => {
   ]);
 
   const innerStyle = omit(style, "position", "top", "left");
+  const transform = `rotate(${style.transform}deg)`;
 
   console.log("cmp render"); //sy-log
 
   return (
     <div
       className={classNames(styles.main, isSelected && "selectedBorder")}
-      style={outerStyle}
-      onClick={setSelected}>
+      style={{...outerStyle, transform}}
+      onClick={setSelected}
+      id={"cmp" + cmp.key}>
       <div className={styles.inner} style={{...innerStyle, zIndex: index}}>
         {cmp.type === isTextComponent && <Text {...cmp} />}
         {cmp.type === isImgComponent && <Img {...cmp} />}

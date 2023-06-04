@@ -11,6 +11,10 @@ export default function Center() {
   const canvas = useEditStore(state => state.canvas);
   const { zoom, zoomIn, zoomOut } = useZoomStore();
   const keyDown = e => {
+    // 注意之前写的选中鼠标事件：CMD+A会影响输入框的文本选中，因此需要再Center中注意一下选中对象~
+    if((e.target as Element).nodeName==='TEXTAREA'){
+      return;
+    }
     if (e.metaKey) {
       switch (e.code) {
         case "KeyA":

@@ -6,13 +6,15 @@ import {
   ICanvas,
   ICmp,
   Style,
-  IEditStore
+  IEditStore,
+  ICmpWithKey
 } from "./editStoreTypes";
 import {getOnlyKey} from "src/utils";
 import Axios from "src/request/axios";
 import {getCanvasByIdEnd, saveCanvasEnd} from "src/request/end";
 import {resetZoom} from "./zoomStore";
 import {recordCanvasChangeHistory} from "./historySlice";
+import {cloneDeep} from "lodash";
 
 const useEditStore = create(
   immer<EditStoreState & EditStoreAction>(() => ({
@@ -38,6 +40,32 @@ export const addCmp = (_cmp: ICmp) => {
     draft.canvas.cmps.push({..._cmp, key: getOnlyKey()});
     draft.assembly = new Set([draft.canvas.cmps.length - 1]);
     recordCanvasChangeHistory(draft)
+  });
+};
+
+// ! 右键菜单
+// 复制选中的单个或者多个组件
+export const addAssemblyCmps = () => {
+  useEditStore.setState((draft) => {
+    const newCmps: Array<ICmpWithKey> = [];
+    const cmps = draft.canvas.cmps;
+    const newAssembly: Set<number> = new Set();
+    let i = cmps.length;
+
+    draft.assembly.forEach((index) => {
+      const cmp = cmps[index];
+      const newCmp = cloneDeep(cmp);
+      newCmp.key = getOnlyKey();
+
+      newCmp.style.top += 40;
+      newCmp.style.left += 40;
+
+      newCmps.push(newCmp);
+      newAssembly.add(i++);
+    });
+
+    draft.canvas.cmps = draft.canvas.cmps.concat(newCmps);
+    draft.assembly = newAssembly;
   });
 };
 

@@ -41,6 +41,17 @@ export const addCmp = (_cmp: ICmp) => {
   });
 };
 
+export const delSelectedCmps = () => {
+  useEditStore.setState((draft) => {
+    const assembly = draft.assembly;
+    draft.canvas.cmps = draft.canvas.cmps.filter(
+      (_, index) => !assembly.has(index)
+    );
+    draft.assembly.clear();
+    recordCanvasChangeHistory(draft);
+  });
+};
+
 export const saveCanvas = async (
   id: number | null,
   type: string,

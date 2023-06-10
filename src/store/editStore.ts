@@ -145,6 +145,14 @@ export const updateAssemblyCmpsByDistance = (newStyle: Style) => {
 };
 
 export const recordCanvasChangeHistory_2 = () => {
+  // 记录历史的时候，如果前后两次没有发生变化，则不记录。
+  const store = useEditStore.getState();
+  if (
+    store.canvas ===
+    store.canvasChangeHistory[store.canvasChangeHistoryIndex].canvas
+  ) {
+    return;
+  }
   useEditStore.setState((draft) => {
     recordCanvasChangeHistory(draft);
   });

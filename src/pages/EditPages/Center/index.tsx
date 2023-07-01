@@ -1,6 +1,9 @@
 import styles from "./index.module.less";
 import Canvas from "./Canvas";
 import useEditStore, {
+  addZIndex,
+  delSelectedCmps,
+  subZIndex,
   setAllCmpsSelected,
   setCmpSelected
 } from "src/store/editStore";
@@ -15,6 +18,11 @@ export default function Center() {
     // 注意之前写的选中鼠标事件：CMD+A会影响输入框的文本选中，因此需要再Center中注意一下选中对象~
     if((e.target as Element).nodeName==='TEXTAREA'){
       return;
+    }
+    switch (e.code) {
+      case "Backspace":
+        delSelectedCmps();
+        return;
     }
     if (e.metaKey) {
       switch (e.code) {
@@ -39,6 +47,16 @@ export default function Center() {
             goPrevCanvasHistory();
           }
           return;
+        // 上移一层
+        case "ArrowUp":
+          e.preventDefault();
+          addZIndex();
+          return;
+        // 下移一层
+        case "ArrowDown":
+            e.preventDefault();
+            subZIndex();
+            return;
       }
     }
   };

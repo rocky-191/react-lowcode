@@ -14,9 +14,15 @@ export interface ICmpWithKey extends ICmp {
 }
 
 export interface ICanvas {
-  title:string;
-  style:Style;
-  cmps:ICmpWithKey[];
+  id: null | number;
+  title: string;
+  type: "content" | "template"; // 页面还是模板页
+  content: IContent;
+}
+
+export interface IContent {
+  style: Style;
+  cmps: Array<ICmpWithKey>;
 }
 
 export type EditStoreState = {

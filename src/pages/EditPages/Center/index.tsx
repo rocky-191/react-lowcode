@@ -3,27 +3,25 @@ import Canvas from "./Canvas";
 import useEditStore, {
   addZIndex,
   delSelectedCmps,
+  canvasStyleSelector,
   subZIndex,
   setAllCmpsSelected,
   setCmpSelected
 } from "src/store/editStore";
 import Zoom from "./Zoom";
 import useZoomStore from "src/store/zoomStore";
-import {goNextCanvasHistory, goPrevCanvasHistory} from "src/store/historySlice";
+import {updateAssemblyCmpsByDistance} from "src/store/editStore";
 
 export default function Center() {
-  const canvas = useEditStore(state => state.canvas);
+  const canvasStyle = useEditStore(canvasStyleSelector);
   const { zoom, zoomIn, zoomOut } = useZoomStore();
   const keyDown = e => {
     // 注意之前写的选中鼠标事件：CMD+A会影响输入框的文本选中，因此需要再Center中注意一下选中对象~
     if((e.target as Element).nodeName==='TEXTAREA'){
       return;
     }
-    switch (e.code) {
-      case "Backspace":
-        delSelectedCmps();
-        return;
-    }
+
+    // CMD+key
     if (e.metaKey) {
       switch (e.code) {
         case "KeyA":
@@ -39,14 +37,6 @@ export default function Center() {
           zoomIn();
           e.preventDefault();
           return;
-        // 撤销、回退
-        case "KeyZ":
-          if (e.shiftKey) {
-            goNextCanvasHistory();
-          } else {
-            goPrevCanvasHistory();
-          }
-          return;
         // 上移一层
         case "ArrowUp":
           e.preventDefault();
@@ -59,13 +49,44 @@ export default function Center() {
             return;
       }
     }
+
+    // 键盘事件
+    switch (e.code) {
+      case "Backspace":
+        delSelectedCmps();
+        return;
+
+      // 左移
+      case "ArrowLeft":
+        e.preventDefault();
+        updateAssemblyCmpsByDistance({left: -1});
+        return;
+
+      // 右移
+      case "ArrowRight":
+        e.preventDefault();
+        updateAssemblyCmpsByDistance({left: 1});
+        return;
+
+      // 上移
+      case "ArrowUp":
+        e.preventDefault();
+        updateAssemblyCmpsByDistance({top: -1});
+        return;
+
+      // 下移
+      case "ArrowDown":
+        e.preventDefault();
+        updateAssemblyCmpsByDistance({top: 1});
+        return;
+    }
   };
   return (
     <div
       id="center"
       className={styles.main}
       style={{
-        minHeight: (zoom / 100) * canvas.style.height + 100
+        minHeight: (zoom / 100) * canvasStyle.height + 100,
       }}
       tabIndex={0}
       onClick={(e: React.MouseEvent) => {

@@ -8,7 +8,8 @@ export default defineConfig({
     open:true,
     proxy: {
       // "/api": "http://template.josephxia.com",
-      "/api":"http://template.codebus.tech"
+      "/api":"http://template.codebus.tech",
+      "/static": "http://template.codebus.tech",
     },
   },
 

@@ -42,20 +42,20 @@ export default function AlignLines({canvasStyle}: AlignLinesProps) {
         }}
       />
       <Line
-        id="canvasLineRight"
-        style={{
-          top: 0,
-          right: 0,
-          height: canvasStyle.height,
-          backgroundColor: "red",
-        }}
-      />
-      <Line
         id="canvasLineBottom"
         style={{
           bottom: 0,
           left: 0,
           width: canvasStyle.width,
+          backgroundColor: "red",
+        }}
+      />
+      <Line
+        id="canvasLineRight"
+        style={{
+          top: 0,
+          right: 0,
+          height: canvasStyle.height,
           backgroundColor: "red",
         }}
       />
@@ -68,6 +68,18 @@ export default function AlignLines({canvasStyle}: AlignLinesProps) {
           backgroundColor: "red",
         }}
       />
+
+      {/* 对齐组件 */}
+      <Line id="lineTop" />
+      <Line id="lineBottom" />
+      <Line id="lineLeft" />
+      <Line id="lineRight" />
+
+      {/* 组件的中心 X 轴 */}
+      <Line id="lineX" />
+
+      {/* 组件的中心 Y 轴 */}
+      <Line id="lineY" />
     </>
   );
 }

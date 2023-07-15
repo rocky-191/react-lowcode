@@ -1,16 +1,18 @@
 import classNames from "classnames";
 import {memo, useState, useEffect} from "react";
 import styles from "./index.module.less";
-import TextSide from "./TextSide";
+import TextSider from "./TextSide";
 import ImgSider from "./ImgSide";
 import GraphSider from "./GraphSide";
+import TplSider from "./TplSider";
 
+export const isTplSide = 0;
 export const isTextComponent = 1;
 export const isImgComponent = 2;
 export const isGraphComponent = 3;
 
 const LeftSider = memo(() => {
-  const [showSide, setShowSide] = useState(0);
+  const [showSide, setShowSide] = useState(-1);
 
   const _setShowSide = (which: number | undefined) => {
     if (showSide === which) {
@@ -21,7 +23,7 @@ const LeftSider = memo(() => {
   };
 
   useEffect(() => {
-    const cancelShow = () => setShowSide(0);
+    const cancelShow = () => setShowSide(-1);
     document.getElementById("center")?.addEventListener("click", cancelShow);
     return () => {
       document
@@ -35,6 +37,21 @@ const LeftSider = memo(() => {
   return (
     <div className={styles.main}>
       <ul className={styles.cmps}>
+        <li
+          className={classNames(
+            styles.cmp,
+            showSide === isTplSide ? styles.selected : ""
+          )}
+          onClick={() => _setShowSide(isTplSide)}>
+          <i
+            className={classNames(
+              "iconfont icon-mobankuangjia-xianxing",
+              styles.cmpIcon
+            )}
+          />
+          <span className={styles.cmpText}>模板</span>
+        </li>
+
         <li
           className={classNames(
             styles.cmp,
@@ -66,9 +83,10 @@ const LeftSider = memo(() => {
         </li>
       </ul>
 
-      {showSide === isTextComponent && <TextSide />}
+      {showSide === isTplSide && <TplSider />}
+      {showSide === isTextComponent && <TextSider />}
       {showSide === isImgComponent && <ImgSider />}
-      {showSide=== isGraphComponent && <GraphSider />}
+      {showSide === isGraphComponent && <GraphSider />}
     </div>
   );
 });

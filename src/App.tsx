@@ -1,23 +1,22 @@
-import {BrowserRouter as Router,Route,Routes} from 'react-router-dom';
-import EditPage from './pages/EditPages';
-import ListPage from './pages/listPage';
-import RequireAuth from './pages/components/RequireAuth'
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
+import EditPage from "./pages/EditPages";
+import ListPage from "./pages/ListPage";
+import RequireAuth from "./pages/components/RequireAuth";
 
-import './App.css';
+export default function App() {
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<RequireAuth />}>
+        <Route index element={<EditPage />} />
+        <Route path="list" element={<ListPage />} />
+      </Route>
+    )
+  );
 
-
-function App() {
-
-  return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<RequireAuth />}>
-          <Route index element={<EditPage />} />
-          <Route path='list' element={<ListPage />} />
-        </Route>
-      </Routes>
-    </Router>
-  )
+  return <RouterProvider router={router} />;
 }
-
-export default App

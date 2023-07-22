@@ -27,6 +27,7 @@ export interface IContent {
 
 export type EditStoreState = {
   canvas:ICanvas;
+  hasSavedCanvas: boolean; // 画布编辑后是否被保存
   assembly:Set<number>;
   // 记录历史
   canvasChangeHistory: Array<{canvas: ICanvas; assembly: Set<number>}>;

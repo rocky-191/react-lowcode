@@ -8,11 +8,12 @@ export type HandleAttributesChangeType = (obj: any) => void;
 
 export default function EditCmp({
   selectedCmp,
+  formKeys,
 }: {
   selectedCmp: ICmpWithKey;
   formKeys: any;
 }) {
-  const {value, style, onClick} = selectedCmp;
+  const {value, style, onClick, formKey, formItemName, inputType} = selectedCmp;
 
   const handleAttributesChange: HandleAttributesChangeType = (obj) => {
     Object.keys(obj).forEach((key) => {
@@ -25,6 +26,37 @@ export default function EditCmp({
     <div className={styles.main}>
       <div className={styles.title}>组件属性</div>
 
+      {formItemName != undefined && (
+        <>
+          <Item label="所属表单: ">
+            <select
+              className={styles.itemRight}
+              value={formKey}
+              onChange={(e) => {
+                handleAttributesChange({formKey: e.target.value});
+              }}>
+              {formKeys &&
+                formKeys.map((key: string) => {
+                  return (
+                    <option key={key} value={key}>
+                      form{key}
+                    </option>
+                  );
+                })}
+            </select>
+          </Item>
+          <Item label="form字段: ">
+            <input
+              type="text"
+              className={styles.itemRight}
+              value={formItemName}
+              onChange={(e) => {
+                handleAttributesChange({formItemName: e.target.value});
+              }}
+            />
+          </Item>
+        </>
+      )}
       <Item label="对齐页面: ">
         <select
           className={styles.itemRight}
@@ -70,6 +102,7 @@ export default function EditCmp({
         styleName="style"
         styleValue={style}
         onClick={onClick}
+        inputType={inputType}
         handleAttributesChange={handleAttributesChange}
       />
     </div>

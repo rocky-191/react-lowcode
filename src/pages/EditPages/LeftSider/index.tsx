@@ -12,6 +12,7 @@ import {
   isFormComponent,
   isGraphComponent,
 } from "src/utils/const";
+import FormSider from "./FormSider";
 
 export const isTplSide = 0b00000000;
 
@@ -85,12 +86,22 @@ const LeftSider = memo(() => {
           />
           <span className={styles.cmpText}>图形</span>
         </li>
+        <li
+          className={classNames(
+            styles.cmp,
+            showSide === isFormComponent ? styles.selected : ""
+          )}
+          onClick={() => _setShowSide(isFormComponent)}>
+          <i className={classNames("iconfont icon-form", styles.cmpIcon)} />
+          <span className={styles.cmpText}>表单</span>
+        </li>
       </ul>
 
       {showSide === isTplSide && <TplSider />}
       {showSide === isTextComponent && <TextSider />}
       {showSide === isImgComponent && <ImgSider />}
       {showSide === isGraphComponent && <GraphSider />}
+      {showSide === isFormComponent && <FormSider />}
     </div>
   );
 });

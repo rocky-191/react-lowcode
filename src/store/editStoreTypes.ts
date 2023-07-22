@@ -5,8 +5,14 @@ export type Style=React.CSSProperties;
 export interface ICmp {
   type: number;
   style: Style;
-  value: string;
+  value?: string;
   onClick?: string;
+
+  // 组合组件: 父组件、子组件
+  //父组件 key
+  groupKey?: string; // 父组件key
+  // group组件的子组件 key 数组
+  groupCmpKeys?: Array<string>;
 }
 
 export interface ICmpWithKey extends ICmp {

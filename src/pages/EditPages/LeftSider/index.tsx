@@ -6,10 +6,14 @@ import ImgSider from "./ImgSide";
 import GraphSider from "./GraphSide";
 import TplSider from "./TplSider";
 
-export const isTplSide = 0;
-export const isTextComponent = 1;
-export const isImgComponent = 2;
-export const isGraphComponent = 3;
+import {
+  isTextComponent,
+  isImgComponent,
+  isFormComponent,
+  isGraphComponent,
+} from "src/utils/const";
+
+export const isTplSide = 0b00000000;
 
 const LeftSider = memo(() => {
   const [showSide, setShowSide] = useState(-1);

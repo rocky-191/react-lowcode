@@ -1,6 +1,5 @@
-import {defaultComponentStyle} from "src/utils/const";
+import {isGraphComponent, defaultComponentStyle} from "src/utils/const";
 import {addCmp} from "src/store/editStore";
-import {isGraphComponent} from ".";
 import leftSideStyles from "./leftSide.module.less";
 
 const defaultStyle = {
@@ -14,7 +13,6 @@ const defaultStyle = {
 const settings = [
   {
     key: "graph0",
-    value: "",
     style: {
       ...defaultStyle,
       borderWidth: 1,
@@ -24,12 +22,10 @@ const settings = [
   },
   {
     key: "graph1",
-    value: "",
     style: defaultStyle,
   },
   {
     key: "graph2",
-    value: "",
     style: {
       ...defaultStyle,
       borderWidth: 1,

@@ -5,7 +5,9 @@ import Axios from "src/request/axios";
 import {
   deleteCanvasByIdEnd,
   getCanvasListEnd,
+  publishEnd,
   saveCanvasEnd,
+  unpublishEnd,
 } from "src/request/end";
 import useUserStore from "src/store/userStore";
 
@@ -15,6 +17,7 @@ interface ListItem {
   title: string;
   content: string;
   thumbnail: {full: string};
+  publish: boolean;
 }
 
 const pagination = {pageSize: 9999, current: 1};
@@ -45,6 +48,26 @@ export default function ListPage() {
         fresh();
       },
     });
+  };
+
+  const publish = async (id: number) => {
+    const res = await Axios.post(publishEnd, {
+      id,
+    });
+    if (res) {
+      message.success("发布成功");
+      fresh();
+    }
+  };
+
+  const unpublish = async (id: number) => {
+    const res = await Axios.post(unpublishEnd, {
+      id,
+    });
+    if (res) {
+      message.success("下架成功");
+      fresh();
+    }
   };
 
   const saveItem = async (item: ListItem) => {
@@ -121,11 +144,32 @@ export default function ListPage() {
         const {id} = item;
         return (
           <Space size="middle">
-            <a
-              target="_blank"
-              href={"https://builder-lemon.vercel.app/?id=" + id}>
-              线上查看（切移动端）
-            </a>
+            {/* 这里应该是发布之后才可以查看 */}
+            {item.type === "content" && (
+              <>
+                {item.publish === false ? (
+                  <>
+                    <a
+                      target="_blank"
+                      href={
+                        "http://builder.codebus.tech?id=" + id + "&preview"
+                      }>
+                      线下预览查看（切移动端）
+                    </a>
+                    <Button onClick={() => publish(id)}>发布</Button>
+                  </>
+                ) : (
+                  <>
+                    <a
+                      target="_blank"
+                      href={"http://builder.codebus.tech?id=" + id}>
+                      线上查看（切移动端）
+                    </a>
+                    <Button onClick={() => unpublish(id)}>下架</Button>
+                  </>
+                )}
+              </>
+            )}
 
             <Link to={editUrl(item)}>编辑</Link>
             {/* 复制 */}
